@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent: ২ মাসের অভিজ্ঞতা</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== THEME: Warm Signal (light-first, terracotta) ===== */
+:root {
+  --font-body: 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  --bg: #faf6f0;
+  --surface: #ffffff;
+  --surface2: #f5ece0;
+  --border: rgba(60, 40, 20, 0.08);
+  --border-bright: rgba(60, 40, 20, 0.16);
+  --text: #2c2a25;
+  --text-dim: #7c756a;
+  --accent: #c2410c;
+  --accent-dim: rgba(194, 65, 12, 0.08);
+  --green: #16a34a;
+  --green-dim: rgba(22, 163, 74, 0.1);
+  --red: #dc2626;
+  --red-dim: rgba(220, 38, 38, 0.1);
+  --blue: #2563eb;
+  --blue-dim: rgba(37, 99, 235, 0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #1c1916;
+  --surface: #262220;
+  --surface2: #302b28;
+  --border: rgba(200, 180, 160, 0.08);
+  --border-bright: rgba(200, 180, 160, 0.16);
+  --text: #f0e8dc;
+  --text-dim: #a09888;
+  --accent: #e85d2a;
+  --accent-dim: rgba(232, 93, 42, 0.1);
+  --green: #4ade80;
+  --green-dim: rgba(74, 222, 128, 0.1);
+  --red: #f87171;
+  --red-dim: rgba(248, 113, 113, 0.1);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96, 165, 250, 0.1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+.deck { height: 100dvh; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.slide {
+  height: 100dvh; scroll-snap-align: start; overflow: hidden; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(40px, 6vh, 80px) clamp(40px, 8vw, 120px);
+  isolation: isolate;
+  opacity: 0; transform: translateY(40px) scale(0.98);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.slide.visible { opacity: 1; transform: none; }
+.slide:nth-child(odd) { background-image: radial-gradient(ellipse at 20% 80%, var(--accent-dim) 0%, transparent 50%); }
+.slide:nth-child(even) { background-image: radial-gradient(ellipse at 80% 20%, var(--accent-dim) 0%, transparent 50%); }
+.slide .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.1s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.2s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.3s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.4s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.5s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.6s; }
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+.slide__decor { position: absolute; pointer-events: none; z-index: 0; }
+.slide__decor--corner { top: 0; right: 0; }
+.slide__display { font-size: clamp(48px, 10vw, 100px); font-weight: 700; letter-spacing: -2px; line-height: 0.95; text-wrap: balance; }
+.slide__heading { font-size: clamp(28px, 5vw, 48px); font-weight: 700; letter-spacing: -1px; line-height: 1.1; text-wrap: balance; margin-bottom: clamp(8px, 1.5vh, 16px); }
+.slide__body { font-size: clamp(17px, 2.5vw, 26px); line-height: 1.7; text-wrap: pretty; color: var(--text-dim); }
+.slide__label { font-family: var(--font-mono); font-size: clamp(10px, 1.2vw, 14px); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: clamp(8px, 1.5vh, 16px); }
+.slide__subtitle { font-family: var(--font-mono); font-size: clamp(14px, 1.8vw, 20px); color: var(--text-dim); letter-spacing: 0.5px; }
+.slide__kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 20vw, 220px), 1fr)); gap: clamp(12px, 2vw, 24px); margin-top: clamp(12px, 2vh, 24px); }
+.slide__kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: clamp(16px, 3vh, 32px) clamp(16px, 2vw, 24px); min-width: 0; overflow: hidden; }
+.slide__kpi-val { font-size: clamp(36px, 6vw, 64px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.slide__kpi-label { font-family: var(--font-mono); font-size: clamp(9px, 1.2vw, 13px); font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-top: 8px; }
+.slide__bullets { list-style: none; padding: 0; }
+.slide__bullets li { padding: 6px 0 6px 22px; position: relative; font-size: clamp(16px, 2vw, 22px); line-height: 1.6; color: var(--text-dim); }
+.slide__bullets li::before { content: ''; position: absolute; left: 0; top: 16px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.slide--title { justify-content: center; align-items: center; text-align: center; }
+.slide--title .slide__display { font-size: clamp(48px, 12vw, 110px); }
+.slide--divider { justify-content: center; }
+.slide--divider .slide__number { font-size: clamp(100px, 22vw, 260px); font-weight: 200; line-height: 0.85; opacity: 0.08; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); pointer-events: none; font-variant-numeric: tabular-nums; }
+.slide--content { justify-content: center; }
+.slide--dashboard { justify-content: center; }
+.slide--table { justify-content: center; }
+.slide--split { padding: 0; }
+.slide--split .slide__panels { display: grid; grid-template-columns: 3fr 2fr; height: 100%; }
+.slide--split .slide__panel { padding: clamp(40px, 6vh, 80px) clamp(32px, 4vw, 60px); display: flex; flex-direction: column; justify-content: center; }
+.slide--split .slide__panel--primary { background: var(--surface); }
+.slide--split .slide__panel--secondary { background: var(--surface2); }
+
+/* Pipeline */
+.pipeline { display: flex; align-items: stretch; gap: 0; flex: 1; min-height: 0; margin-top: clamp(12px, 2vh, 24px); }
+.pipeline__step { flex: 1; background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 10px; padding: clamp(14px, 2.5vh, 28px) clamp(12px, 1.5vw, 22px); display: flex; flex-direction: column; min-width: 0; overflow-wrap: break-word; }
+.pipeline__num { font-size: clamp(10px, 1.2vw, 13px); font-weight: 600; color: var(--accent); letter-spacing: 1px; }
+.pipeline__name { font-size: clamp(16px, 2vw, 24px); font-weight: 700; margin: clamp(4px, 0.8vh, 8px) 0; }
+.pipeline__desc { font-size: clamp(12px, 1.3vw, 16px); color: var(--text-dim); line-height: 1.5; flex: 1; }
+.pipeline__arrow { display: flex; align-items: center; padding: 0 clamp(3px, 0.4vw, 6px); color: var(--accent); flex-shrink: 0; opacity: 0.4; }
+@media (max-width: 768px) {
+  .pipeline { flex-direction: column; }
+  .pipeline__arrow { justify-content: center; padding: 4px 0; transform: rotate(90deg); }
+}
+
+/* Tables */
+.table-wrap { flex: 1; min-height: 0; overflow: hidden; width: 100%; }
+.table-scroll { overflow-x: auto; height: 100%; }
+.data-table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 1.8vw, 20px); }
+.data-table th { font-family: var(--font-mono); font-size: clamp(10px, 1.3vw, 14px); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: left; padding: clamp(8px, 1.5vh, 14px) clamp(12px, 2vw, 20px); border-bottom: 1px solid var(--border-bright); color: var(--text-dim); }
+.data-table td { padding: clamp(10px, 1.5vh, 16px) clamp(12px, 2vw, 20px); border-bottom: 1px solid var(--border); }
+
+/* Badge */
+.badge { display: inline-block; font-family: var(--font-mono); font-size: clamp(10px, 1.1vw, 13px); font-weight: 600; padding: 4px 12px; border-radius: 6px; background: var(--accent-dim); color: var(--accent); letter-spacing: 0.5px; }
+
+/* Deck chrome */
+.deck-progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 100; transition: width 0.3s ease; pointer-events: none; }
+.deck-dots { position: fixed; right: clamp(12px, 2vw, 24px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; background: color-mix(in srgb, var(--bg) 70%, transparent 30%); padding: 6px; border-radius: 20px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.deck-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); opacity: 0.3; border: none; padding: 0; cursor: pointer; transition: opacity 0.2s ease, transform 0.2s ease; }
+.deck-dot:hover { opacity: 0.6; }
+.deck-dot.active { opacity: 1; transform: scale(1.5); background: var(--accent); }
+.deck-counter { position: fixed; bottom: clamp(12px, 2vh, 24px); right: clamp(12px, 2vw, 24px); font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); z-index: 100; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--bg) 70%, transparent 30%); padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.deck-hints { position: fixed; bottom: clamp(12px, 2vh, 24px); left: 50%; transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); opacity: 0.6; z-index: 100; transition: opacity 0.5s ease; white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.deck-hints.faded { opacity: 0; pointer-events: none; }
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: clamp(12px, 2vh, 24px);
+  right: clamp(12px, 2vw, 24px);
+  z-index: 100;
+  background: color-mix(in srgb, var(--bg) 70%, transparent 30%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  transition: all 0.2s ease;
+}
+.theme-toggle:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+/* Cards grid */
+.cards-grid { display: grid; gap: clamp(12px, 2vw, 20px); margin-top: clamp(12px, 2vh, 24px); }
+.cards-2 { grid-template-columns: repeat(2, 1fr); }
+.cards-3 { grid-template-columns: repeat(3, 1fr); }
+.cards-4 { grid-template-columns: repeat(4, 1fr); }
+.card-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: clamp(14px, 2vh, 24px); min-width: 0; }
+.card-item__title { font-size: clamp(14px, 1.6vw, 20px); font-weight: 700; margin-bottom: 4px; }
+.card-item__desc { font-size: clamp(12px, 1.3vw, 16px); color: var(--text-dim); line-height: 1.5; }
+
+@media (max-height: 700px) {
+  .slide { padding: clamp(24px, 4vh, 40px) clamp(32px, 6vw, 80px); }
+  .slide__display { font-size: clamp(36px, 8vw, 72px); }
+  .slide--divider .slide__number { font-size: clamp(80px, 16vw, 160px); }
+}
+@media (max-height: 600px) {
+  .slide__decor { display: none; }
+}
+@media (max-height: 500px) {
+  .slide { padding: clamp(16px, 3vh, 24px) clamp(24px, 5vw, 48px); }
+  .deck-dots { display: none; }
+  .slide__display { font-size: clamp(28px, 7vw, 48px); }
+}
+@media (max-width: 768px) {
+  .cards-2, .cards-3, .cards-4 { grid-template-columns: 1fr; }
+  .slide--split .slide__panels { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="deck">
+<button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+
+<!-- Slide 1: Title -->
+<section class="slide slide--title">
+  <svg class="slide__decor slide__decor--corner" width="120" height="120" viewBox="0 0 120 120">
+    <line x1="120" y1="0" x2="120" y2="40" stroke="var(--accent)" stroke-width="2" opacity="0.2"/>
+    <line x1="80" y1="0" x2="120" y2="0" stroke="var(--accent)" stroke-width="2" opacity="0.2"/>
+  </svg>
+  <div class="slide__content">
+    <p class="slide__label reveal">Brain Station 23 &bull; AI Excellence Show &amp; Tell</p>
+    <h1 class="slide__display reveal">Hermes Agent</h1>
+    <p class="slide__body reveal" style="color:var(--accent); font-weight:500; margin-top:8px;">সবাই কেন এখন এই AI এজেন্ট নিয়ে পাগল?</p>
+    <p class="slide__subtitle reveal" style="margin-top:16px;">আমার ২ মাসের অভিজ্ঞতা</p>
+    <div style="margin-top:24px;">
+      <span class="badge">Md Jamilur Rahman</span>
+      <span class="badge" style="margin-left:6px;">@jamilxt</span>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 2: Hook -->
+<section class="slide slide--content">
+  <p class="slide__label reveal">Hook</p>
+  <h2 class="slide__heading reveal">সকালের মেসেজ</h2>
+  <div style="background:var(--surface); border-left:3px solid var(--accent); padding:16px 20px; border-radius:0 8px 8px 0; margin:12px 0;">
+    <p style="font-size:clamp(18px,2.5vw,24px); font-weight:600; color:var(--text);">"আর্টিকেল পাবলিশ হয়ে গেছে। লিংক: dev.to/jamilxt/..."</p>
+  </div>
+  <div style="margin-top:12px;">
+    <p class="slide__body reveal" style="color:var(--text); font-weight:600;">আমি কিছু লিখিনি।</p>
+    <p class="slide__body reveal" style="color:var(--accent); font-weight:600;">ঘুমানোর সময় এজেন্ট কাজ করেছে।</p>
+  </div>
+  <div style="background:var(--surface2); border-left:3px solid var(--text-dim); padding:14px 18px; border-radius:0 8px 8px 0; margin-top:12px;">
+    <p class="slide__body reveal" style="font-size:clamp(15px,1.8vw,20px);">এজেন্ট নিজে থেকে ট্রেন্ড স্ক্যান করে, আর্টিকেল লিখে, গিটহাবে push করে, ডেভ.টুতে পাবলিশ করেছে — সব automatically।</p>
+  </div>
+  <p class="slide__subtitle reveal" style="margin-top:12px;">এটা আমার daily reality।</p>
+</section>
+
+<!-- Slide 3: Overview -->
+<section class="slide slide--dashboard">
+  <p class="slide__label reveal" style="margin-bottom:4px;">Overview</p>
+  <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px); margin-bottom:6px;">চ্যাটবট না, এজেন্ট</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:6px;">
+    <div style="background:var(--surface2); border-radius:8px; padding:8px 12px; text-align:center;">
+      <div style="font-size:clamp(12px,1.4vw,16px); font-weight:600; color:var(--text-dim);">ChatGPT</div>
+      <div style="font-size:clamp(18px,2.2vw,26px); font-weight:700; color:var(--text-dim);">উত্তর দেয়</div>
+      <div style="font-family:var(--font-mono); font-size:clamp(8px,0.9vw,11px); color:var(--text-dim); text-transform:uppercase;">Passive</div>
+    </div>
+    <div style="background:var(--accent-dim); border:1px solid var(--accent); border-radius:8px; padding:8px 12px; text-align:center;">
+      <div style="font-size:clamp(12px,1.4vw,16px); font-weight:600; color:var(--accent);">Hermes</div>
+      <div style="font-size:clamp(18px,2.2vw,26px); font-weight:700; color:var(--accent);">কাজ করে</div>
+      <div style="font-family:var(--font-mono); font-size:clamp(8px,0.9vw,11px); color:var(--accent); text-transform:uppercase;">Active</div>
+    </div>
+  </div>
+  <p style="font-size:clamp(10px,1.1vw,13px); color:var(--text-dim); text-align:center; margin-bottom:6px;">বানিয়েছে <strong>Nous Research</strong> &middot; MIT &middot; ১২ Mar 2026</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 8px; text-align:center;">
+      <div style="font-size:clamp(20px,3vw,36px); font-weight:800; letter-spacing:-0.5px;">১.০৮T</div>
+      <div style="font-family:var(--font-mono); font-size:clamp(7px,0.8vw,10px); color:var(--text-dim); text-transform:uppercase;">tokens</div>
+    </div>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 8px; text-align:center;">
+      <div style="font-size:clamp(20px,3vw,36px); font-weight:800; letter-spacing:-0.5px;">২.১৮L+</div>
+      <div style="font-family:var(--font-mono); font-size:clamp(7px,0.8vw,10px); color:var(--text-dim); text-transform:uppercase;">GitHub stars</div>
+    </div>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:6px 8px; text-align:center;">
+      <div style="font-size:clamp(20px,3vw,36px); font-weight:800; letter-spacing:-0.5px;">১৫০B</div>
+      <div style="font-family:var(--font-mono); font-size:clamp(7px,0.8vw,10px); color:var(--text-dim); text-transform:uppercase;">OpenClaw #5</div>
+    </div>
+  </div>
+  <p style="font-size:clamp(10px,1.1vw,13px); color:var(--text-dim); text-align:center; margin-top:6px;">মডেল-অ্যাগনস্টিক — যেকোনো LLM দিয়ে চলে</p>
+</section>
+
+<!-- Slide 4: Core Feature -->
+<section class="slide slide--content">
+  <p class="slide__label reveal">Core Feature</p>
+  <h2 class="slide__heading reveal">সবচেয়ে বড় পার্থক্য: নিজে শেখে</h2>
+  
+  <div style="margin-bottom:20px;">
+    <div class="pipeline reveal">
+      <div class="pipeline__step" style="border-top-color:var(--blue);">
+        <div class="pipeline__num" style="color:var(--blue);">DO</div>
+        <div class="pipeline__name">কাজ করো</div>
+      </div>
+      <div class="pipeline__arrow">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="pipeline__step">
+        <div class="pipeline__num">LEARN</div>
+        <div class="pipeline__name">কী শিখলাম?</div>
+      </div>
+      <div class="pipeline__arrow">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="pipeline__step" style="border-top-color:var(--green);">
+        <div class="pipeline__num" style="color:var(--green);">IMPROVE</div>
+        <div class="pipeline__name">skill ফাইল</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="cards-grid cards-3 reveal">
+    <div class="card-item" style="background:var(--surface); border-left:3px solid var(--accent);">
+      <div class="card-item__title">আমার অভিজ্ঞতা</div>
+      <div class="card-item__desc">প্রথম দিন পুরা path লিখত। ৩০ দিন পর নিজে skill বানিয়ে ফেলল।</div>
+      <div class="card-item__desc" style="margin-top:4px;">Bengali skill: এখন dari (।) নিজে থেকে correct করে।</div>
+    </div>
+    <div class="card-item" style="background:var(--surface2);">
+      <div class="card-item__title">ClawHub</div>
+      <div class="card-item__desc">২,৮৫৭ skill<br>১২% flagged</div>
+    </div>
+    <div class="card-item" style="background:var(--accent-dim); border-color:var(--accent);">
+      <div class="card-item__title" style="color:var(--accent);">Hermes</div>
+      <div class="card-item__desc">Supply chain risk = ০</div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 5: Architecture -->
+<section class="slide slide--split">
+  <div class="slide__panels">
+    <div class="slide__panel slide__panel--primary">
+      <p class="slide__label reveal">Architecture</p>
+      <h2 class="slide__heading reveal">আর্কিটেকচার সহজ ভাষায়</h2>
+      <p class="slide__body reveal" style="font-size:clamp(13px,1.4vw,16px);">LLM = ঘোড়া। Harness = লাগাম।</p>
+      <div class="pipeline" style="flex-direction:column; gap:4px; margin-top:12px;">
+        <div class="pipeline__step" style="padding:8px 14px; border-top-color:var(--blue);"><div class="pipeline__name" style="font-size:clamp(12px,1.3vw,16px);">Message</div></div>
+        <div class="pipeline__step" style="padding:8px 14px;"><div class="pipeline__name" style="font-size:clamp(12px,1.3vw,16px);">Build Context</div></div>
+        <div class="pipeline__step" style="padding:8px 14px; border-top-color:var(--accent);"><div class="pipeline__name" style="font-size:clamp(12px,1.3vw,16px);">LLM Call</div></div>
+        <div class="pipeline__step" style="padding:8px 14px;"><div class="pipeline__name" style="font-size:clamp(12px,1.3vw,16px);">Tool Call</div></div>
+        <div class="pipeline__step" style="padding:8px 14px; border-top-color:var(--green);"><div class="pipeline__name" style="font-size:clamp(12px,1.3vw,16px);">Memory Update</div></div>
+      </div>
+    </div>
+    <div class="slide__panel slide__panel--secondary" style="justify-content:center;">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px;">
+        <p class="slide__body reveal" style="font-size:clamp(14px,1.5vw,18px); line-height:1.6;">যতক্ষণ না কাজ শেষ, লুপ চলতে থাকে। শেষে এজেন্ট ভাবে: <span style="color:var(--accent); font-weight:600;">"এই কাজটা করতে গিয়ে এই জিনিসটা শিখলাম। মনে রাখি।"</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 6: Memory -->
+<section class="slide slide--content">
+  <p class="slide__label reveal">Memory</p>
+  <h2 class="slide__heading reveal">মেমোরি: Layered System</h2>
+  <div class="cards-grid cards-2" style="margin-top:4px;">
+    <div class="card-item">
+      <div class="card-item__title">স্তর ১: Core Files</div>
+      <div class="card-item__desc">soul.md &middot; memory.md &middot; user.md</div>
+      <div class="card-item__desc" style="font-size:clamp(11px,1.1vw,13px);">২,২০০ char &bull; প্রতিটা মেসেজে যায়</div>
+    </div>
+    <div class="card-item" style="background:var(--accent-dim); border-color:var(--accent);">
+      <div class="card-item__title" style="color:var(--accent);">স্তর ২: SQLite FTS5</div>
+      <div class="card-item__desc">সব কনভার্সেশন &bull; সেকেন্ডে সার্চ</div>
+    </div>
+  </div>
+  <div class="cards-grid cards-2" style="margin-top:4px;">
+    <div class="card-item">
+      <div class="card-item__title">স্তর ৩: External <span style="font-size:70%; opacity:0.5;">(WIP)</span></div>
+      <div class="card-item__desc">Honcho &middot; Mem0 &bull; implicit patterns</div>
+    </div>
+    <div class="card-item">
+      <div class="card-item__title">স্তর ৪: Obsidian <span style="font-size:70%; opacity:0.5;">(WIP)</span></div>
+      <div class="card-item__desc">Second Brain &bull; MCP bridge</div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px;">
+    <p class="slide__body reveal" style="font-size:clamp(13px,1.4vw,17px); font-weight:600; color:var(--accent);">আমার status</p>
+    <ul class="slide__bullets reveal">
+      <li><strong>স্তর ১ ও ২:</strong> active, যথেষ্ট কাজ চলছে</li>
+      <li><strong>স্তর ৩ ও ৪:</strong> Obsidian + Honcho setup testing এ</li>
+      <li>কমিউনিটি অনেকে <strong style="color:var(--accent);">Iron Man এর Jarvis</strong> এর মতো use করছে — আমার next goal</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Slide 7: Daily Life -->
+<section class="slide slide--split">
+  <div class="slide__panels">
+    <div class="slide__panel slide__panel--primary">
+      <p class="slide__label reveal">My Setup</p>
+      <h2 class="slide__heading reveal">দৈনন্দিন জীবন: ৫ ক্রন জব</h2>
+      <table class="data-table" style="font-size:clamp(12px,1.4vw,17px);">
+        <tr><td style="font-weight:600; white-space:nowrap; width:80px;">রাত ২টা</td><td>ট্রেন্ড স্ক্যান (HN, TechCrunch, Ars Technica)</td></tr>
+        <tr><td style="font-weight:600;">সকাল ১০টা</td><td>আর্টিকেল লিখে পাবলিশ</td></tr>
+        <tr><td style="font-weight:600;">দুপুর ৩টা</td><td>ডেইলি ব্রিফিং</td></tr>
+        <tr><td style="font-weight:600;">রাত ৮টা</td><td>বাংলা রাইটিং প্র্যাকটিস</td></tr>
+        <tr><td style="font-weight:600;">শুক্রবার</td><td>উইকলি বোর্ড রিপোর্ট</td></tr>
+      </table>
+    </div>
+    <div class="slide__panel slide__panel--secondary" style="gap:12px;">
+      <div class="slide__kpi" style="background:var(--accent-dim); border-color:var(--accent);"><div class="slide__kpi-val">৩০+</div><div class="slide__kpi-label">আর্টিকেল অটোমেটিক</div></div>
+      <div class="slide__kpi"><div class="slide__kpi-val">০</div><div class="slide__kpi-label">হাতে লেখা</div></div>
+      <div class="slide__kpi"><div class="slide__kpi-val">১৬$</div><div class="slide__kpi-label">প্রতি মাস খরচ</div></div>
+      <p class="slide__body reveal" style="font-size:clamp(13px,1.4vw,17px); text-align:center;">এজেন্ট ২৪/৭ কাজ করে। আমি সময় পাই high-level কাজের জন্য।</p>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 8: My Data -->
+<section class="slide slide--dashboard">
+  <p class="slide__label reveal">My Data</p>
+  <h2 class="slide__heading reveal">আমার টোকেন আর খরচ</h2>
+  <p class="slide__body reveal" style="font-size:clamp(12px,1.3vw,15px);">Hermes-ই আমার প্রথম AI agent। আগে কখনো agent framework use করিনি।</p>
+  <div class="slide__kpis">
+    <div class="slide__kpi"><div class="slide__kpi-val">৪১৪</div><div class="slide__kpi-label">সেশন</div></div>
+    <div class="slide__kpi" style="background:var(--accent-dim); border-color:var(--accent);"><div class="slide__kpi-val">২৮.৮M</div><div class="slide__kpi-label">input tokens</div></div>
+    <div class="slide__kpi"><div class="slide__kpi-val">৭,৮৩৭</div><div class="slide__kpi-label">tool calls</div></div>
+    <div class="slide__kpi"><div class="slide__kpi-val">৫২৭M</div><div class="slide__kpi-label">total tokens</div></div>
+  </div>
+  <div style="display:flex; gap:12px; margin-top:12px; align-items:flex-start;">
+    <div style="flex:1;">
+      <p class="slide__body reveal" style="font-family:var(--font-mono); font-size:clamp(11px,1.2vw,14px); font-weight:600; color:var(--accent);">৮টা মডেল ব্যবহার করেছি</p>
+      <table class="data-table" style="font-size:clamp(11px,1.2vw,14px);">
+        <tr><th>মডেল</th><th>সেশন</th><th>Provider</th></tr>
+        <tr><td style="font-weight:600;">GLM-5.1</td><td>২২১</td><td>z.ai</td></tr>
+        <tr><td>MiMo v2-Omni</td><td>৫৪</td><td>Xiaomi</td></tr>
+        <tr><td>MiMo v2.5</td><td>৫৩</td><td>Xiaomi</td></tr>
+        <tr><td>GLM-4.7</td><td>২৭</td><td>z.ai</td></tr>
+        <tr><td style="font-weight:600; color:var(--accent);">GLM-5.2</td><td>১৬</td><td>z.ai</td></tr>
+        <tr><td>DeepSeek V4 Flash</td><td>২</td><td>opencode-go</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="slide__body reveal" style="font-size:clamp(11px,1.2vw,13px); margin-top:4px;">Providers: z.ai → Xiaomi MiMo → z.ai + opencode-go &bull; Top tool: terminal (৩,৯৫১)</p>
+</section>
+
+<!-- Slide 9: Use Cases -->
+<section class="slide slide--content">
+  <p class="slide__label reveal">Use Cases</p>
+  <h2 class="slide__heading reveal">কোন কাজে ব্যবহার করেছি</h2>
+  <div class="cards-grid cards-4" style="margin-top:4px;">
+    <div class="card-item" style="background:var(--accent-dim); border-color:var(--accent);"><div class="card-item__title" style="color:var(--accent);">Content Factory</div><div class="card-item__desc">৩০+ আর্টিকেল auto-publish</div></div>
+    <div class="card-item"><div class="card-item__title">Server Admin</div><div class="card-item__desc">cleanup, audit, monitor</div></div>
+    <div class="card-item"><div class="card-item__title">Code Review</div><div class="card-item__desc">১৬ পর্ব critique cycle</div></div>
+    <div class="card-item"><div class="card-item__title">Research</div><div class="card-item__desc">trend, job market</div></div>
+  </div>
+  <div class="cards-grid cards-4" style="margin-top:4px;">
+    <div class="card-item"><div class="card-item__title">Bengali Practice</div><div class="card-item__desc">self-improving skill</div></div>
+    <div class="card-item" style="background:var(--accent-dim); border-color:var(--accent);"><div class="card-item__title" style="color:var(--accent);">Presentation</div><div class="card-item__desc">এই স্লাইডগুলোও!</div></div>
+    <div class="card-item"><div class="card-item__title">Trend Spotting</div><div class="card-item__desc">HN, RSS, DuckDuckGo</div></div>
+    <div class="card-item"><div class="card-item__title">Next: Multi-Agent</div><div class="card-item__desc">Jarvis = my next goal</div></div>
+  </div>
+</section>
+
+<!-- Slide 10: Comparison -->
+<section class="slide slide--table">
+  <p class="slide__label reveal">Comparison</p>
+  <h2 class="slide__heading reveal">Hermes বনাম অন্যান্য এজেন্ট</h2>
+  <div class="table-wrap reveal">
+    <div class="table-scroll">
+      <table class="data-table">
+        <tr><th>Feature</th><th style="color:var(--accent);">Hermes</th><th>OpenClaw</th><th>Claude Code</th><th>Codex</th></tr>
+        <tr><td style="font-weight:600;">Self-learning</td><td style="color:var(--green);">✅</td><td style="color:var(--red);">❌</td><td style="color:var(--red);">❌</td><td style="color:var(--red);">❌</td></tr>
+        <tr><td style="font-weight:600;">Auto skills</td><td style="color:var(--green);">✅</td><td>📝 Manual</td><td>📝 Manual</td><td style="color:var(--red);">❌</td></tr>
+        <tr><td style="font-weight:600;">Memory</td><td>SQLite FTS5</td><td>Markdown</td><td>Session</td><td>Session</td></tr>
+        <tr><td style="font-weight:600;">Voice</td><td style="color:var(--green);">✅</td><td style="color:var(--green);">✅</td><td style="color:var(--red);">❌</td><td style="color:var(--red);">❌</td></tr>
+        <tr><td style="font-weight:600;">Cron</td><td style="color:var(--green);">✅</td><td style="color:var(--green);">✅</td><td style="color:var(--red);">❌</td><td style="color:var(--red);">❌</td></tr>
+        <tr><td style="font-weight:600;">Security</td><td style="color:var(--green);">খুব কম CVE</td><td style="color:var(--red);">🚨 138+ CVE</td><td>—</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">খরচ</td><td style="color:var(--green);">5-20$/mo</td><td>10-30$/mo</td><td>20+$/mo</td><td>20+$/mo</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="slide__body reveal" style="text-align:center; font-size:clamp(12px,1.3vw,16px); margin-top:8px;">Claude Code + Codex = coding assistant &bull; Hermes automation-first agent</p>
+</section>
+
+<!-- Slide 11: Security -->
+<section class="slide slide--split">
+  <div class="slide__panels">
+    <div class="slide__panel slide__panel--primary">
+      <p class="slide__label reveal">Security</p>
+      <h2 class="slide__heading reveal">সিকিউরিটি: একটা সিরিয়াস কথা</h2>
+      <div class="slide__kpis" style="grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="slide__kpi" style="background:var(--surface2);">
+          <div class="slide__kpi-label" style="font-size:clamp(14px,1.5vw,18px); font-weight:700; color:var(--text);">OpenClaw</div>
+          <ul class="slide__bullets" style="font-size:clamp(11px,1.2vw,14px);">
+            <li>৬৩ দিনে <strong>১৩৮টা CVE</strong></li>
+            <li>৭টা critical (CVSS &gt; ৯.০)</li>
+            <li style="color:var(--red);">সর্বোচ্চ CVSS: ৯.৯</li>
+            <li>১২% skill malware rate</li>
+          </ul>
+        </div>
+        <div class="slide__kpi" style="background:var(--accent-dim); border-color:var(--accent);">
+          <div class="slide__kpi-label" style="font-size:clamp(14px,1.5vw,18px); font-weight:700; color:var(--accent);">Hermes</div>
+          <ul class="slide__bullets" style="font-size:clamp(11px,1.2vw,14px);">
+            <li>CVE <strong>খুব কম</strong> (low/medium)</li>
+            <li>v0.19.0: P0 fixes</li>
+            <li>কোনো মার্কেটপ্লেস নেই</li>
+            <li>Secret redaction on</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide__panel slide__panel--secondary" style="justify-content:center;">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px;">
+        <p class="slide__body reveal" style="font-size:clamp(14px,1.5vw,18px);"><strong>আমার সেটআপ:</strong></p>
+        <ul class="slide__bullets" style="font-size:clamp(12px,1.3vw,16px); margin-top:8px;">
+          <li>VPN-only SSH</li>
+          <li>Cloudflare proxy</li>
+          <li>No Docker</li>
+          <li>Per-tool API key</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 12: Honest -->
+<section class="slide slide--content">
+  <p class="slide__label reveal">Honest</p>
+  <h2 class="slide__heading reveal">ভুল করে। আত্মবিশ্বাসের সাথে।</h2>
+  <div class="cards-grid cards-2" style="margin-top:8px;">
+    <div class="card-item" style="background:var(--surface2);">
+      <div class="card-item__title">URL Hallucination</div>
+      <div class="card-item__desc">বিশ্বাসযোগ্য দেখতে URL বানিয়ে দেয় যেগুলো ৪০৪</div>
+    </div>
+    <div class="card-item" style="background:var(--surface2);">
+      <div class="card-item__title">Memory Poisoning</div>
+      <div class="card-item__desc">ভুল তথ্য memory.md তে গেলে বারবার repeat হয়</div>
+    </div>
+  </div>
+  <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px;">
+    <p class="slide__body reveal" style="font-weight:600; color:var(--accent);">আমার সমাধান</p>
+    <ul class="slide__bullets reveal">
+      <li><strong>Source verification:</strong> প্রতিটা URL verify করো, ৪০৪ remove করো</li>
+      <li><strong>Memory approval:</strong> নিজে approve না করলে memory.md update হবে না</li>
+      <li><strong>২+ sources:</strong> কোনো claim করলে অন্তত ২টা source থেকে verify</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Slide 13: Get Started -->
+<section class="slide slide--title">
+  <svg class="slide__decor slide__decor--corner" width="120" height="120" viewBox="0 0 120 120">
+    <line x1="120" y1="0" x2="120" y2="40" stroke="var(--accent)" stroke-width="2" opacity="0.2"/>
+    <line x1="80" y1="0" x2="120" y2="0" stroke="var(--accent)" stroke-width="2" opacity="0.2"/>
+  </svg>
+  <div class="slide__content">
+    <p class="slide__label reveal">Get Started</p>
+    <h2 class="slide__heading reveal">কীভাবে শুরু করবেন</h2>
+    <div class="pipeline" style="flex:0; margin-top:16px;">
+      <div class="pipeline__step" style="border-top-color:var(--blue);">
+        <div class="pipeline__num" style="color:var(--blue);">১</div>
+        <div class="pipeline__name">VPS</div>
+        <div class="pipeline__desc">৫-৬$/mo</div>
+      </div>
+      <div class="pipeline__arrow"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="pipeline__step">
+        <div class="pipeline__num">২</div>
+        <div class="pipeline__name">Install</div>
+        <div class="pipeline__desc">১ কমান্ড / desktop app</div>
+      </div>
+      <div class="pipeline__arrow"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="pipeline__step">
+        <div class="pipeline__num">৩</div>
+        <div class="pipeline__name">LLM</div>
+        <div class="pipeline__desc">z.ai / OpenAI</div>
+      </div>
+      <div class="pipeline__arrow"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="pipeline__step">
+        <div class="pipeline__num">৪</div>
+        <div class="pipeline__name">Telegram</div>
+        <div class="pipeline__desc">বট সেটআপ</div>
+      </div>
+      <div class="pipeline__arrow"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14m-4-4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="pipeline__step" style="border-top-color:var(--green);">
+        <div class="pipeline__num" style="color:var(--green);">৫</div>
+        <div class="pipeline__name">পরিচয়</div>
+        <div class="pipeline__desc">বাকি সে শিখবে</div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border); margin-top:12px; padding-top:12px;">
+      <p class="slide__body reveal" style="font-size:clamp(16px,2.2vw,24px); font-weight:600; color:var(--accent);">এজেন্ট ২৪/৭ কাজ করে।</p>
+      <p class="slide__body reveal" style="margin-top:8px;">Hermes open source, শুরু করতে ৫-১০ মিনিট লাগে।</p>
+      <div style="margin-top:16px;">
+        <span class="badge">slides.jamilxt.com/hermes/</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+<script>
+function autoFit() {
+  document.querySelectorAll('.slide__kpi-val').forEach(function(el) {
+    if (el.scrollWidth > el.clientWidth) {
+      el.style.transform = 'scale(' + (el.clientWidth / el.scrollWidth) + ')';
+      el.style.transformOrigin = 'left top';
+    }
+  });
+}
+class SlideEngine {
+  constructor() {
+    this.deck = document.querySelector('.deck');
+    this.slides = [...document.querySelectorAll('.slide')];
+    this.current = 0; this.total = this.slides.length;
+    this.buildChrome(); this.bindEvents(); this.observe(); this.update();
+  }
+  buildChrome() {
+    var bar = document.createElement('div'); bar.className = 'deck-progress'; document.body.appendChild(bar); this.bar = bar;
+    var dots = document.createElement('div'); dots.className = 'deck-dots';
+    var self = this;
+    this.slides.forEach(function(_, i) {
+      var d = document.createElement('button'); d.className = 'deck-dot'; d.title = 'Slide ' + (i + 1);
+      d.onclick = function() { self.goTo(i); }; dots.appendChild(d);
+    });
+    document.body.appendChild(dots); this.dots = [].slice.call(dots.children);
+    var ctr = document.createElement('div'); ctr.className = 'deck-counter'; document.body.appendChild(ctr); this.counter = ctr;
+    var hints = document.createElement('div'); hints.className = 'deck-hints';
+    hints.textContent = '\u2190 \u2192 or scroll to navigate'; document.body.appendChild(hints); this.hints = hints;
+    this.hintTimer = setTimeout(function() { hints.classList.add('faded'); }, 4000);
+  }
+  bindEvents() {
+    var self = this;
+    document.addEventListener('keydown', function(e) {
+      if (e.target.closest('.mermaid-wrap, .table-scroll, .code-scroll, input, textarea, [contenteditable]')) return;
+      if (['ArrowDown','ArrowRight',' ','PageDown'].includes(e.key)) { e.preventDefault(); self.next(); }
+      else if (['ArrowUp','ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); self.prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); self.goTo(0); }
+      else if (e.key === 'End') { e.preventDefault(); self.goTo(self.total - 1); }
+      self.fadeHints();
+    });
+    var touchY;
+    this.deck.addEventListener('touchstart', function(e) { touchY = e.touches[0].clientY; }, { passive: true });
+    this.deck.addEventListener('touchend', function(e) {
+      var dy = touchY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 50) { dy > 0 ? self.next() : self.prev(); }
+    });
+  }
+  observe() {
+    var self = this;
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); self.current = self.slides.indexOf(entry.target); self.update(); }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(function(s) { obs.observe(s); });
+  }
+  goTo(i) { this.slides[Math.max(0, Math.min(i, this.total - 1))].scrollIntoView({ behavior: 'smooth' }); }
+  next() { if (this.current < this.total - 1) this.goTo(this.current + 1); }
+  prev() { if (this.current > 0) this.goTo(this.current - 1); }
+  update() {
+    this.bar.style.width = ((this.current + 1) / this.total * 100) + '%';
+    var self = this;
+    this.dots.forEach(function(d, i) { d.classList.toggle('active', i === self.current); });
+    this.counter.textContent = (this.current + 1) + ' / ' + this.total;
+  }
+  fadeHints() { clearTimeout(this.hintTimer); this.hints.classList.add('faded'); }
+}
+
+// Theme Toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const button = document.querySelector('.theme-toggle');
+  const currentTheme = html.getAttribute('data-theme');
+  
+  if (currentTheme === 'dark') {
+    html.removeAttribute('data-theme');
+    button.textContent = '🌙 Dark';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    button.textContent = '☀️ Light';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+// Load saved theme
+(function() {
+  const savedTheme = localStorage.getItem('theme');
+  const button = document.querySelector('.theme-toggle');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (button) button.textContent = '☀️ Light';
+  }
+})();
+
+document.addEventListener('DOMContentLoaded', function() { autoFit(); new SlideEngine(); });
+</script>
+</body>
+</html>

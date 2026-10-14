@@ -1,0 +1,51 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "hermes-agent",
+  "elements": [
+    {"type":"text","id":"title","x":330,"y":10,"text":"Hermes Agent - How It Works","fontSize":28,"fontFamily":1,"strokeColor":"#1e1e1e","originalText":"Hermes Agent - How It Works","autoResize":true},
+
+    {"type":"rectangle","id":"user","x":50,"y":130,"width":140,"height":80,"backgroundColor":"#a5d8ff","fillStyle":"solid","roundness":{"type":3},"boundElements":[{"id":"t_user","type":"text"},{"id":"a_u2g","type":"arrow"}]},
+    {"type":"text","id":"t_user","x":55,"y":155,"width":130,"height":25,"text":"You (Telegram)","fontSize":18,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"user","originalText":"You (Telegram)","autoResize":true},
+
+    {"type":"arrow","id":"a_u2g","x":190,"y":170,"width":90,"height":0,"points":[[0,0],[90,0]],"strokeColor":"#1e1e1e","strokeWidth":2,"endArrowhead":"arrow","boundElements":[{"id":"t_a_u2g","type":"text"}],"startBinding":{"elementId":"user","fixedPoint":[1,0.5]},"endBinding":{"elementId":"gateway","fixedPoint":[0,0.5]}},
+    {"type":"text","id":"t_a_u2g","x":210,"y":150,"width":50,"height":20,"text":"message","fontSize":14,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"a_u2g","originalText":"message","autoResize":true},
+
+    {"type":"rectangle","id":"cron","x":310,"y":30,"width":140,"height":50,"backgroundColor":"#fff3bf","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#f59e0b","boundElements":[{"id":"t_cron","type":"text"},{"id":"a_cron2g","type":"arrow"}]},
+    {"type":"text","id":"t_cron","x":315,"y":40,"width":130,"height":25,"text":"Cron Jobs","fontSize":18,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"cron","originalText":"Cron Jobs","autoResize":true},
+
+    {"type":"arrow","id":"a_cron2g","x":380,"y":80,"width":0,"height":20,"points":[[0,0],[0,20]],"strokeColor":"#f59e0b","strokeWidth":2,"endArrowhead":"arrow","strokeStyle":"dashed"},
+
+    {"type":"rectangle","id":"gateway","x":280,"y":110,"width":180,"height":120,"backgroundColor":"#d0bfff","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#8b5cf6","strokeWidth":2,"boundElements":[{"id":"t_gateway","type":"text"},{"id":"a_u2g","type":"arrow"},{"id":"a_g2llm","type":"arrow"},{"id":"a_cron2g","type":"arrow"},{"id":"a_g2tools","type":"arrow"}]},
+    {"type":"text","id":"t_gateway","x":285,"y":130,"width":170,"height":50,"text":"Hermes Gateway\n(Orchestrator)","fontSize":18,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"gateway","originalText":"Hermes Gateway\n(Orchestrator)","autoResize":true},
+
+    {"type":"arrow","id":"a_g2llm","x":460,"y":170,"width":90,"height":0,"points":[[0,0],[90,0]],"strokeColor":"#8b5cf6","strokeWidth":2,"endArrowhead":"arrow","boundElements":[{"id":"t_a_g2llm","type":"text"}],"startBinding":{"elementId":"gateway","fixedPoint":[1,0.5]},"endBinding":{"elementId":"llm","fixedPoint":[0,0.5]}},
+    {"type":"text","id":"t_a_g2llm","x":475,"y":150,"width":60,"height":20,"text":"reasoning","fontSize":14,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"a_g2llm","originalText":"reasoning","autoResize":true},
+
+    {"type":"rectangle","id":"llm","x":550,"y":130,"width":160,"height":80,"backgroundColor":"#ffd8a8","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#f59e0b","boundElements":[{"id":"t_llm","type":"text"},{"id":"a_g2llm","type":"arrow"}]},
+    {"type":"text","id":"t_llm","x":555,"y":150,"width":150,"height":40,"text":"LLM Provider\n(GLM-5.2 / z.ai)","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"llm","originalText":"LLM Provider\n(GLM-5.2 / z.ai)","autoResize":true},
+
+    {"type":"text","id":"tools_label","x":150,"y":260,"text":"Tools (the agent can actually DO things)","fontSize":20,"fontFamily":1,"strokeColor":"#1e1e1e","originalText":"Tools (the agent can actually DO things)","autoResize":true},
+
+    {"type":"rectangle","id":"tool_term","x":30,"y":300,"width":130,"height":60,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","boundElements":[{"id":"t_tool_term","type":"text"}]},
+    {"type":"text","id":"t_tool_term","x":35,"y":312,"width":120,"height":35,"text":"Terminal\n(SSH, scripts)","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"tool_term","originalText":"Terminal\n(SSH, scripts)","autoResize":true},
+
+    {"type":"rectangle","id":"tool_file","x":180,"y":300,"width":130,"height":60,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","boundElements":[{"id":"t_tool_file","type":"text"}]},
+    {"type":"text","id":"t_tool_file","x":185,"y":312,"width":120,"height":35,"text":"File I/O\n(read / write)","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"tool_file","originalText":"File I/O\n(read / write)","autoResize":true},
+
+    {"type":"rectangle","id":"tool_web","x":330,"y":300,"width":130,"height":60,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","boundElements":[{"id":"t_tool_web","type":"text"}]},
+    {"type":"text","id":"t_tool_web","x":335,"y":312,"width":120,"height":35,"text":"Web Search\n+ Fetch","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"tool_web","originalText":"Web Search\n+ Fetch","autoResize":true},
+
+    {"type":"rectangle","id":"tool_git","x":480,"y":300,"width":130,"height":60,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","boundElements":[{"id":"t_tool_git","type":"text"}]},
+    {"type":"text","id":"t_tool_git","x":485,"y":312,"width":120,"height":35,"text":"Git / GitHub\n(push, PR)","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"tool_git","originalText":"Git / GitHub\n(push, PR)","autoResize":true},
+
+    {"type":"rectangle","id":"tool_api","x":630,"y":300,"width":140,"height":60,"backgroundColor":"#b2f2bb","fillStyle":"solid","roundness":{"type":3},"strokeColor":"#22c55e","boundElements":[{"id":"t_tool_api","type":"text"}]},
+    {"type":"text","id":"t_tool_api","x":635,"y":312,"width":130,"height":35,"text":"REST APIs\n(Dev.to, Medium)","fontSize":16,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"tool_api","originalText":"REST APIs\n(Dev.to, Medium)","autoResize":true},
+
+    {"type":"arrow","id":"a_g2tools","x":370,"y":230,"width":0,"height":70,"points":[[0,0],[0,70]],"strokeColor":"#8b5cf6","strokeWidth":2,"endArrowhead":"arrow","strokeStyle":"dashed","boundElements":[{"id":"t_a_g2tools","type":"text"}]},
+    {"type":"text","id":"t_a_g2tools","x":335,"y":250,"width":70,"height":20,"text":"executes","fontSize":14,"fontFamily":1,"strokeColor":"#1e1e1e","textAlign":"center","verticalAlign":"middle","containerId":"a_g2tools","originalText":"executes","autoResize":true},
+
+    {"type":"text","id":"note","x":140,"y":390,"text":"Open-source by Nous Research | Self-hosted on $5 VPS | ~$16/month total","fontSize":16,"fontFamily":1,"strokeColor":"#757575","originalText":"Open-source by Nous Research | Self-hosted on $5 VPS | ~$16/month total","autoResize":true}
+  ],
+  "appState": {"viewBackgroundColor": "#ffffff"}
+}
